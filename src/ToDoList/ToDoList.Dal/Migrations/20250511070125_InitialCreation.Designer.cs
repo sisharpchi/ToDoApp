@@ -12,8 +12,8 @@ using ToDoList.Dal;
 namespace ToDoList.Dal.Migrations
 {
     [DbContext(typeof(MainContext))]
-    [Migration("20250506055515_AddedUserTable")]
-    partial class AddedUserTable
+    [Migration("20250511070125_InitialCreation")]
+    partial class InitialCreation
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -52,7 +52,12 @@ namespace ToDoList.Dal.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("ToDoItemId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ToDoItems");
                 });
@@ -89,6 +94,14 @@ namespace ToDoList.Dal.Migrations
                         .HasMaxLength(15)
                         .HasColumnType("nvarchar(15)");
 
+                    b.Property<int>("Role")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Salt")
+                        .IsRequired()
+                        .HasMaxLength(36)
+                        .HasColumnType("nvarchar(36)");
+
                     b.Property<string>("UserName")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -106,6 +119,22 @@ namespace ToDoList.Dal.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("ToDoList.Dal.Entity.ToDoItem", b =>
+                {
+                    b.HasOne("ToDoList.Dal.Entity.User", "User")
+                        .WithMany("ToDoItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ToDoList.Dal.Entity.User", b =>
+                {
+                    b.Navigation("ToDoItems");
                 });
 #pragma warning restore 612, 618
         }

@@ -49,7 +49,12 @@ namespace ToDoList.Dal.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<long>("UserId")
+                        .HasColumnType("bigint");
+
                     b.HasKey("ToDoItemId");
+
+                    b.HasIndex("UserId");
 
                     b.ToTable("ToDoItems");
                 });
@@ -111,6 +116,22 @@ namespace ToDoList.Dal.Migrations
                         .IsUnique();
 
                     b.ToTable("Users", (string)null);
+                });
+
+            modelBuilder.Entity("ToDoList.Dal.Entity.ToDoItem", b =>
+                {
+                    b.HasOne("ToDoList.Dal.Entity.User", "User")
+                        .WithMany("ToDoItems")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("ToDoList.Dal.Entity.User", b =>
+                {
+                    b.Navigation("ToDoItems");
                 });
 #pragma warning restore 612, 618
         }

@@ -33,21 +33,23 @@ public class ToDoItemRepository : IToDoItemRepository
 
     }
 
-    public Task<ICollection<ToDoItem>> SearchToDoItemsAsync(string keyword)
+    public async Task<ICollection<ToDoItem>> SearchToDoItemsAsync(string keyword)
     {
         throw new NotImplementedException();
     }
 
-    public async Task<ICollection<ToDoItem>> SelectAllToDoItemsAsync(int skip, int take)
+    public async Task<ICollection<ToDoItem>> SelectAllToDoItemsAsync(long userId, int skip, int take)
     {
         if (skip < 0 || take <= 0)
         {
             throw new ArgumentOutOfRangeException("Skip and take must be non-negative and take must be greater than zero.");
         }
-        return await MainContext.ToDoItems
+        var getAll = await MainContext.ToDoItems.Where(t => t.UserId == userId)
               .Skip(skip)
               .Take(take)
               .ToListAsync();
+
+        return getAll;
     }
 
     public async Task<ICollection<ToDoItem>> SelectByDueDateAsync(DateTime dueTime)

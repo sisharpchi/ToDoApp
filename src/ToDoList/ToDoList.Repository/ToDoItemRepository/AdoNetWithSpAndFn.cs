@@ -47,7 +47,7 @@ public class AdoNetWithSpAndFn : IToDoItemRepository
     }
 
 
-    public async Task<ICollection<ToDoItem>> SelectAllToDoItemsAsync(int skip, int take)
+    public async Task<ICollection<ToDoItem>> SelectAllToDoItemsAsync(long userId, int skip, int take)
     {
         var items = new List<ToDoItem>();
 

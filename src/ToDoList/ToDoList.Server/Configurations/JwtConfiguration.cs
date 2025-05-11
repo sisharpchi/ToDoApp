@@ -23,5 +23,7 @@ public static class JwtConfiguration
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(config["SecurityKey"]!))
                 };
             });
+
+        builder.Services.AddHttpContextAccessor();
     }
 }

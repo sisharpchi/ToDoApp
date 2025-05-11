@@ -26,9 +26,5 @@ public static class DependicyInjectionConfigurations
 
         builder.Services.AddScoped<IValidator<ToDoItemCreateDto>, ToDoItemCreateDtoValidator>();
         builder.Services.AddScoped<IValidator<ToDoItemUpdateDto>, ToDoItemUpdateDtoValidator>();
-
-
-
-
     }
 }

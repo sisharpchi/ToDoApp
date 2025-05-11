@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System.Security.Claims;
 using ToDoList.Bll.DTOs;
 using ToDoList.Bll.Services;
 
@@ -23,9 +24,8 @@ public class ToDoListController : ControllerBase
     public async Task<long> AddToDoItem(ToDoItemCreateDto toDoItemCreateDto)
     {
         _logger.LogInformation("AddToDoItem method worked");
-
-        var id = await _toDoItemService.AddToDoItemAsync(toDoItemCreateDto);
-        return id;
+        var result = await _toDoItemService.AddToDoItemAsync(toDoItemCreateDto);
+        return result;
     }
     
     [HttpDelete("delete")]
@@ -47,8 +47,8 @@ public class ToDoListController : ControllerBase
     public async Task<GetAllResponseModel> GetAllToDoItemsAsync(int skip, int take)
     {
         _logger.LogInformation($"GetAllToDoItemsAsync method worked");
-
-        return await _toDoItemService.GetAllToDoItemsAsync(skip, take);
+        var userId = Int64.Parse(User.FindFirst("UserId")?.Value!);
+        return await _toDoItemService.GetAllToDoItemsAsync(userId, skip, take);
     }
 
     [HttpGet("getById")]

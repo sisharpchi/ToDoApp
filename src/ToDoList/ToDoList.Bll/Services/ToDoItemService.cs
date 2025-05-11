@@ -5,6 +5,8 @@ using ToDoList.Errors;
 using ToDoList.Bll.DTOs;
 using ToDoList.Dal.Entity;
 using ToDoList.Repository.ToDoItemRepository;
+using Microsoft.AspNetCore.Http;
+using System.Security.Claims;
 
 namespace ToDoList.Bll.Services
 {
@@ -15,14 +17,16 @@ namespace ToDoList.Bll.Services
         private readonly IValidator<ToDoItemUpdateDto> _toDoItemUpdateDtoValidator;
         private readonly IMapper _mapper;
         private readonly ILogger<ToDoItemService> _logger;
-        
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public ToDoItemService(IToDoItemRepository toDoItemRepository, IValidator<ToDoItemCreateDto> validator, IMapper mapper, ILogger<ToDoItemService> logger)
+
+        public ToDoItemService(IToDoItemRepository toDoItemRepository, IValidator<ToDoItemCreateDto> validator, IMapper mapper, ILogger<ToDoItemService> logger, IHttpContextAccessor httpContextAccessor)
         {
             _toDoItemRepository = toDoItemRepository;
             _toDoItemCreateDtoValidator = validator;
             _mapper = mapper;
             _logger = logger;
+            _httpContextAccessor = httpContextAccessor;
         }
 
         public async Task<long> AddToDoItemAsync(ToDoItemCreateDto toDoItem)
@@ -35,7 +39,9 @@ namespace ToDoList.Bll.Services
 
             ArgumentNullException.ThrowIfNull(toDoItem);
             var covert = _mapper.Map<ToDoItem>(toDoItem);
-
+            var userId = _httpContextAccessor.HttpContext?.User?.FindFirst("UserId")?.Value;
+            covert.UserId = Int64.Parse(userId!);
+            //toDoItem
             var id = await _toDoItemRepository.InsertToDoItemAsync(covert);
             return id;
         }
@@ -50,9 +56,9 @@ namespace ToDoList.Bll.Services
             await _toDoItemRepository.DeleteToDoItemByIdAsync(id);
         }
 
-        public async Task<GetAllResponseModel> GetAllToDoItemsAsync(int skip, int take)
+        public async Task<GetAllResponseModel> GetAllToDoItemsAsync(long userId, int skip, int take)
         {
-            var toDoItems = await _toDoItemRepository.SelectAllToDoItemsAsync(skip, take);
+            var toDoItems = await _toDoItemRepository.SelectAllToDoItemsAsync(userId, skip, take);
             var totalCount = await _toDoItemRepository.SelectTotalCountAsync();
           
 
