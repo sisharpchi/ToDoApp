@@ -8,4 +8,7 @@ public class ToDoItem
     public bool IsCompleted { get; set; }
     public DateTime CreatedAt { get; set; }
     public DateTime DueDate { get; set; }
+
+    public long UserId { get; set; }
+    public User User { get; set; }
 }

@@ -18,7 +18,7 @@ public class Program
         builder.Services.AddControllers(options =>
         {
             options.Filters.Add<ApiExceptionFilterAttribute>();
-            options.Filters.Add<ToDoListCountHeaderFilter>();
+            //options.Filters.Add<ToDoListCountHeaderFilter>();
         });
 
         // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -27,7 +27,7 @@ public class Program
         builder.Configure();
         builder.Configuration();
         builder.ConfigurationJwtAuth();
-
+        builder.Services.AddHttpContextAccessor();
         builder.Services.AddCors(options =>
         {
             options.AddPolicy("AllowAll", policy =>

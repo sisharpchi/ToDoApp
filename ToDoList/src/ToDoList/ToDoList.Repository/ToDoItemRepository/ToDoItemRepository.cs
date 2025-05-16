@@ -13,9 +13,9 @@ public class ToDoItemRepository : IToDoItemRepository
         MainContext = mainDbContext;
     }
 
-    public async Task DeleteToDoItemByIdAsync(long id)
+    public async Task DeleteToDoItemByIdAsync(long toDoItemID, long userId)
     {
-        var toDoItem = await SelectToDoItemByIdAsync(id);
+        var toDoItem = await SelectToDoItemByIdAsync(toDoItemID, userId);
         MainContext.ToDoItems.Remove(toDoItem);
         await MainContext.SaveChangesAsync();
     }
@@ -30,34 +30,40 @@ public class ToDoItemRepository : IToDoItemRepository
         await MainContext.ToDoItems.AddAsync(toDoItem);
         await MainContext.SaveChangesAsync();
         return toDoItem.ToDoItemId;
-
     }
 
-    public Task<ICollection<ToDoItem>> SearchToDoItemsAsync(string keyword)
+    public async Task<ICollection<ToDoItem>> SearchToDoItemsAsync(string keyword, long userID)
     {
-        throw new NotImplementedException();
+        return await MainContext.ToDoItems.Where(t => t.Title.Contains(keyword) && t.UserId == userID).ToListAsync();
     }
 
-    public async Task<ICollection<ToDoItem>> SelectAllToDoItemsAsync(int skip, int take)
+    public async Task<ICollection<ToDoItem>> SelectAllToDoItemsAsync(long userID, int skip, int take)
     {
         if (skip < 0 || take <= 0)
         {
             throw new ArgumentOutOfRangeException("Skip and take must be non-negative and take must be greater than zero.");
         }
+
         return await MainContext.ToDoItems
+              .Where(t => t.UserId == userID)
               .Skip(skip)
               .Take(take)
               .ToListAsync();
     }
 
-    public async Task<ICollection<ToDoItem>> SelectByDueDateAsync(DateTime dueTime)
+    public IQueryable<ToDoItem> SelectAllToDoItems()
+    {
+        return MainContext.ToDoItems;
+    }
+
+    public async Task<ICollection<ToDoItem>> SelectByDueDateAsync(DateTime dueTime, long userId)
     {
         var query = MainContext.ToDoItems
-            .Where(t => t.DueDate.Date == dueTime);
+            .Where(t => t.DueDate.Date == dueTime && t.UserId == userId);
         return await query.ToListAsync();
     }
 
-    public async Task<ICollection<ToDoItem>> SelectCompletedAsync(int skip, int take)
+    public async Task<ICollection<ToDoItem>> SelectCompletedAsync(long userID, int skip, int take)
     {
         if (skip < 0 || take <= 0)
         {
@@ -65,21 +71,21 @@ public class ToDoItemRepository : IToDoItemRepository
         }
 
         var query = MainContext.ToDoItems
-            .Where(t => t.IsCompleted)
+            .Where(t => t.IsCompleted && t.UserId == userID)
             .Skip(skip)
             .Take(take);
 
         return await query.ToListAsync();
     }
 
-    public async Task<ICollection<ToDoItem>> SelectIncompleteAsync(int skip, int take)
+    public async Task<ICollection<ToDoItem>> SelectIncompleteAsync(long userID, int skip, int take)
     {
         if (skip < 0 || take <= 0)
         {
             throw new ArgumentOutOfRangeException("Skip and take must be non-negative and take must be greater than zero.");
         }
         var query = MainContext.ToDoItems
-            .Where(t => !t.IsCompleted)
+            .Where(t => !t.IsCompleted && t.UserId == userID)
             .Skip(skip)
             .Take(take);
 
@@ -91,16 +97,16 @@ public class ToDoItemRepository : IToDoItemRepository
         throw new NotImplementedException();
     }
 
-    public async Task<ToDoItem> SelectToDoItemByIdAsync(long id)
+    public async Task<ToDoItem> SelectToDoItemByIdAsync(long toDoItemID, long userId)
     {
-        var toDoItem = await MainContext.ToDoItems.FirstOrDefaultAsync(x => x.ToDoItemId == id);
+        var toDoItem = await MainContext.ToDoItems.FirstOrDefaultAsync(x => x.ToDoItemId == toDoItemID && x.UserId == userId);
 
         return toDoItem;
     }
 
-    public async Task<int> SelectTotalCountAsync()
+    public async Task<int> SelectTotalCountAsync(long userID)
     {
-        return await MainContext.ToDoItems.CountAsync();
+        return await MainContext.ToDoItems.Where(t => t.UserId == userID).CountAsync();
     }
 
     public async Task UpdateToDoItemAsync(ToDoItem toDoItem)
@@ -109,4 +115,3 @@ public class ToDoItemRepository : IToDoItemRepository
         await MainContext.SaveChangesAsync();
     }
 }
-

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using ToDoList.Dal;
 
@@ -11,9 +12,11 @@ using ToDoList.Dal;
 namespace ToDoList.Dal.Migrations
 {
     [DbContext(typeof(MainContext))]
-    partial class MainContextModelSnapshot : ModelSnapshot
+    [Migration("20250512231423_InitialCreation")]
+    partial class InitialCreation
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -21,34 +24,6 @@ namespace ToDoList.Dal.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
-
-            modelBuilder.Entity("ToDoList.Dal.Entity.RefreshToken", b =>
-                {
-                    b.Property<long>("RefreshTokenId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bigint");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("RefreshTokenId"));
-
-                    b.Property<DateTime>("Expiration")
-                        .HasColumnType("datetime2");
-
-                    b.Property<bool>("IsRevoked")
-                        .HasColumnType("bit");
-
-                    b.Property<string>("Token")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<long>("UserId")
-                        .HasColumnType("bigint");
-
-                    b.HasKey("RefreshTokenId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("RefreshTokens");
-                });
 
             modelBuilder.Entity("ToDoList.Dal.Entity.ToDoItem", b =>
                 {
@@ -146,17 +121,6 @@ namespace ToDoList.Dal.Migrations
                     b.ToTable("Users", (string)null);
                 });
 
-            modelBuilder.Entity("ToDoList.Dal.Entity.RefreshToken", b =>
-                {
-                    b.HasOne("ToDoList.Dal.Entity.User", "User")
-                        .WithMany("RefreshTokens")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("User");
-                });
-
             modelBuilder.Entity("ToDoList.Dal.Entity.ToDoItem", b =>
                 {
                     b.HasOne("ToDoList.Dal.Entity.User", "User")
@@ -170,8 +134,6 @@ namespace ToDoList.Dal.Migrations
 
             modelBuilder.Entity("ToDoList.Dal.Entity.User", b =>
                 {
-                    b.Navigation("RefreshTokens");
-
                     b.Navigation("ToDoItems");
                 });
 #pragma warning restore 612, 618

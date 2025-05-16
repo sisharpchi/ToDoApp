@@ -26,5 +26,9 @@ public class UserConfigurations : IEntityTypeConfiguration<User>
         builder.Property(u => u.Salt).IsRequired().HasMaxLength(36);
 
         builder.Property(u => u.Password).IsRequired().HasMaxLength(128);
+
+        builder.HasMany(u => u.RefreshTokens)
+            .WithOne(r => r.User)
+            .HasForeignKey(r => r.UserId);
     }
 }

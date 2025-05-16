@@ -23,7 +23,6 @@ public class ToDoListController : ControllerBase
     public async Task<long> AddToDoItem(ToDoItemCreateDto toDoItemCreateDto)
     {
         _logger.LogInformation("AddToDoItem method worked");
-
         var id = await _toDoItemService.AddToDoItemAsync(toDoItemCreateDto);
         return id;
     }
@@ -32,7 +31,6 @@ public class ToDoListController : ControllerBase
     public async Task DeleteToDoItemByIdAsync(long id)
     {
         _logger.LogInformation("DeleteToDoItemByIdAsync method worked");
-
         await _toDoItemService.DeleteToDoItemByIdAsync(id);
     }
 
@@ -47,7 +45,6 @@ public class ToDoListController : ControllerBase
     public async Task<GetAllResponseModel> GetAllToDoItemsAsync(int skip, int take)
     {
         _logger.LogInformation($"GetAllToDoItemsAsync method worked");
-
         return await _toDoItemService.GetAllToDoItemsAsync(skip, take);
     }
 
@@ -73,7 +70,6 @@ public class ToDoListController : ControllerBase
     public async Task UpdateToDoItemAsync(ToDoItemUpdateDto toDoItemUpdateDto)
     {
         _logger.LogInformation("UpdateToDoItemAsync method worked");
-
         await _toDoItemService.UpdateToDoItemAsync(toDoItemUpdateDto);
     }
 }

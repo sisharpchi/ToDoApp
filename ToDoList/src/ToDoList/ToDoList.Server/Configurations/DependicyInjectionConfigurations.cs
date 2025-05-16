@@ -12,6 +12,8 @@ public static class DependicyInjectionConfigurations
     public static void Configure(this WebApplicationBuilder builder)
     {
         //builder.Services.AddScoped<IToDoItemRepository, AdoNetWithSpAndFn>();
+        builder.Services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
+
         builder.Services.AddScoped<IToDoItemRepository, ToDoItemRepository>();
         builder.Services.AddScoped<IToDoItemService, ToDoItemService>();
 
@@ -27,8 +29,7 @@ public static class DependicyInjectionConfigurations
         builder.Services.AddScoped<IValidator<ToDoItemCreateDto>, ToDoItemCreateDtoValidator>();
         builder.Services.AddScoped<IValidator<ToDoItemUpdateDto>, ToDoItemUpdateDtoValidator>();
 
-
-
-
+        builder.Services.AddScoped<IValidator<UserCreateDto>, UserCreateDtoValidator>();
+        builder.Services.AddScoped<IValidator<UserLoginDto>, UserLoginDtoValidator>();
     }
 }
