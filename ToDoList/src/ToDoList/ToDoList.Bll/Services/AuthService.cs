@@ -84,6 +84,11 @@ public class AuthService : IAuthService
         return loginResponseDto;
     }
 
+    public async Task LogOut(string token)
+    {
+        await _refreshTokenRepository.RemoveRefreshTokenAsync(token);
+    }
+
     public async Task<LoginResponseDto> RefreshTokenAsync(RefreshRequestDto refreshRequestDto)
     {
         ClaimsPrincipal? principal = TokenService.GetPrincipalFromExpiredToken(refreshRequestDto.AccessToken);
